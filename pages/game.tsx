@@ -1,12 +1,12 @@
 import {NextPage} from "next"
 import {FunctionComponent, useEffect, useState, WheelEventHandler} from "react"
 import { PixelsApi } from "../utils/xplaceClient"
-import {PixelsBo} from "xplace-client"
 import {PixelSquare} from "../components/PixelSquare"
 import useWindowDimensions from "../utils/useWindowDimensions"
 import dynamic from "next/dynamic"
 import {AppProvider, useApp} from "@pixi/react"
 import {Application} from "pixi.js"
+import {PixelsBo} from "../xplace-client"
 
 const Stage = dynamic(() =>
   import('@pixi/react').then((mod) => mod.Stage), {
@@ -19,22 +19,20 @@ const PixiComponentViewport = dynamic(() =>
   }
 )
 
-const zoomPercentThreshold = 0.05
-const minZoom = 0.01
-const maxZoom = 3
-
 interface GameComponentProps {
   windowHeight: number
   windowWidth: number
 }
 
+type SelectedPixelState = {x: number, y: number} | undefined
+
 let app: Application | undefined
 
 const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
-
   const app = useApp()
   const windowDimensions = useWindowDimensions()
   const [zoomPercent, setZoomPercent] = useState(1)
+  const [selectedPixel, setSelectedPixel] = useState<SelectedPixelState>(undefined)
 
   const gridSize = 10 // TODO : fetch from API
 
@@ -57,14 +55,17 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
     setPixels(data)
   }
 
-  const [pixels, setPixels] = useState<Array<PixelsBo>>([])
+  const handleTapOnPixel = (x: number, y: number) => {
+    const isSamePixel = selectedPixel?.x === x && selectedPixel?.y === y
 
-  const handleWheelEvent: WheelEventHandler = (event) => {
-    const newZoom = event.deltaY > 0 ? zoomPercent - zoomPercentThreshold : zoomPercent + zoomPercentThreshold
-    const newZoomInBounds = Math.min(Math.max(newZoom, minZoom), maxZoom)
-
-    setZoomPercent(newZoomInBounds)
+    if (isSamePixel) {
+      setSelectedPixel(undefined)
+    } else {
+      setSelectedPixel({x, y})
+    }
   }
+
+  const [pixels, setPixels] = useState<Array<PixelsBo>>([])
 
   useEffect(
     () => {
@@ -74,27 +75,32 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
   )
 
   return (
-    <div onWheel={handleWheelEvent}>
-      <Stage width={props.windowWidth} height={props.windowHeight} options={{ backgroundColor: "#ffffff" }}>
-        <PixiComponentViewport app={app} width={props.windowWidth} height={props.windowHeight} zoomPercent={zoomPercent}>
-          {
-            pixels.map(e => {
-              const pixelSize = windowDimensions.height / gridSize
-              const x = e.x * pixelSize
-              const y = ((gridSize - 1) - e.y) * pixelSize
-              const id = `${x}${y}`
-              return <PixelSquare
-                key={id}
-                x={x}
-                y={y}
-                size={pixelSize}
-                color={e.color}
-              />
-            })
-          }
-        </PixiComponentViewport>
-      </Stage>
-    </div>
+    <Stage
+      width={props.windowWidth}
+      height={props.windowHeight}
+      options={{ backgroundColor: 0xffffff }}
+    >
+      <PixiComponentViewport app={app} width={props.windowWidth} height={props.windowHeight} zoomPercent={zoomPercent}>
+        {
+          pixels.map(e => {
+            const pixelSize = windowDimensions.height / gridSize
+            const isSelected = selectedPixel?.x === e.x && selectedPixel?.y === e.y
+            const x = e.x * pixelSize
+            const y = ((gridSize - 1) - e.y) * pixelSize
+            const id = `${x}${y}`
+            return <PixelSquare
+              key={id}
+              x={x}
+              y={y}
+              size={pixelSize}
+              color={e.color}
+              isSelected={isSelected}
+              onClick={() => handleTapOnPixel(e.x, e.y)}
+            />
+          })
+        }
+      </PixiComponentViewport>
+    </Stage>
   )
 }
 
