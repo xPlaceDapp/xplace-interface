@@ -35,6 +35,10 @@ export const theme = extendTheme({
     body: 'Poppins, sans-serif',
   },
   colors: {
+    xplace: {
+      mainColor: "#efc938",
+      black: "#000000"
+    },
     elvenTools: {
       bgStripes: '#2c3440',
       shadowColor: '#141414',

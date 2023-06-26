@@ -1,5 +1,5 @@
 import {NextPage} from "next"
-import {FunctionComponent, useEffect, useState, WheelEventHandler} from "react"
+import React, {FunctionComponent, MouseEventHandler, useEffect, useState, WheelEventHandler} from "react"
 import { PixelsApi } from "../utils/xplaceClient"
 import {PixelSquare} from "../components/PixelSquare"
 import useWindowDimensions from "../utils/useWindowDimensions"
@@ -7,6 +7,9 @@ import dynamic from "next/dynamic"
 import {AppProvider, useApp} from "@pixi/react"
 import {Application} from "pixi.js"
 import {PixelsBo} from "../xplace-client"
+import {LoginModalButton} from "../components/core/LoginModalButton"
+import {Box, Text} from "@chakra-ui/react"
+import {ButtonDetailsModal} from "../components/xplace/ButtonDetailsModal"
 
 const Stage = dynamic(() =>
   import('@pixi/react').then((mod) => mod.Stage), {
@@ -75,32 +78,70 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
   )
 
   return (
-    <Stage
+    <Box
+      position={"absolute"}
+      display={"flex"}
+      flexDirection={"column"}
       width={props.windowWidth}
       height={props.windowHeight}
-      options={{ backgroundColor: 0xffffff }}
     >
-      <PixiComponentViewport app={app} width={props.windowWidth} height={props.windowHeight} zoomPercent={zoomPercent}>
-        {
-          pixels.map(e => {
-            const pixelSize = windowDimensions.height / gridSize
-            const isSelected = selectedPixel?.x === e.x && selectedPixel?.y === e.y
-            const x = e.x * pixelSize
-            const y = ((gridSize - 1) - e.y) * pixelSize
-            const id = `${x}${y}`
-            return <PixelSquare
-              key={id}
-              x={x}
-              y={y}
-              size={pixelSize}
-              color={e.color}
-              isSelected={isSelected}
-              onClick={() => handleTapOnPixel(e.x, e.y)}
-            />
-          })
-        }
-      </PixiComponentViewport>
-    </Stage>
+      <Box
+        position={"absolute"}
+        display={"flex"}
+        flexDirection={"row"}
+        alignContent={"center"}
+        justifyContent={"flex-end"}
+        zIndex={100000}
+        width={"100%"}
+        pointerEvents={"all"}
+      >
+        <LoginModalButton/>
+      </Box>
+      <Box
+        position={"absolute"}
+        zIndex={1}
+      >
+        <Stage
+          width={props.windowWidth}
+          height={props.windowHeight}
+          options={{ backgroundColor: 0xffffff }}
+        >
+          <PixiComponentViewport app={app} width={props.windowWidth} height={props.windowHeight} zoomPercent={zoomPercent}>
+            {
+              pixels.map(e => {
+                const pixelSize = windowDimensions.height / gridSize
+                const isSelected = selectedPixel?.x === e.x && selectedPixel?.y === e.y
+                const x = e.x * pixelSize
+                const y = ((gridSize - 1) - e.y) * pixelSize
+                const id = `${x}${y}`
+                return <PixelSquare
+                  key={id}
+                  x={x}
+                  y={y}
+                  size={pixelSize}
+                  color={e.color}
+                  isSelected={isSelected}
+                  onClick={() => handleTapOnPixel(e.x, e.y)}
+                />
+              })
+            }
+          </PixiComponentViewport>
+        </Stage>
+      </Box>
+      <Box
+        position={"absolute"}
+        zIndex={1000000}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        justify={"center"}
+        height={"100%"}
+        width={"100%"}
+        pointerEvents={"none"}
+      >
+        <ButtonDetailsModal pixelCoordinates={selectedPixel}/>
+      </Box>
+    </Box>
   )
 }
 

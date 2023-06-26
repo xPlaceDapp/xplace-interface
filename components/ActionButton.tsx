@@ -25,9 +25,9 @@ export const ActionButton: FC<PropsWithChildren<ActionButtonProps>> = ({
   return (
     <Box
       as="button"
-      borderColor="elvenTools.color2.darker"
+      borderColor="xplace.black"
       borderWidth={2}
-      bgColor="transparent"
+      bgColor="xplace.mainColor"
       py={2}
       px={6}
       rounded="xl"
@@ -35,7 +35,7 @@ export const ActionButton: FC<PropsWithChildren<ActionButtonProps>> = ({
       cursor={disabled ? 'not-allowed' : 'pointer'}
       color="elvenTools.white"
       userSelect="none"
-      _hover={!disabled ? { bg: 'elvenTools.color2.darker' } : {}}
+      _hover={!disabled ? { bg: 'xplace.black' } : {}}
       transition="background-color .3s"
       width={isFullWidth ? '100%' : 'auto'}
       onClick={handleClick}
