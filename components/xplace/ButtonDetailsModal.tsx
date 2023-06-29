@@ -3,29 +3,45 @@ import {Box, Flex, Slide, Text} from "@chakra-ui/react"
 import {PixelsApi} from "../../utils/xplaceClient"
 import {PixelInfosBo} from "../../xplace-client"
 import {ButtonAvailableColors} from "./ButtonAvailableColors"
+import {ChangePixelColorButton} from "./ChangePixelColorButton"
 
 interface ButtonDetailsModalProps {
-  pixelCoordinates?: { x: number, y: number }
+  selectedPixelProperties?: { x: number, y: number, color: string },
+  onChangePixelClick: (x: number, y: number, selectedColor: string) => void
 }
 
-export const ButtonDetailsModal: FC<ButtonDetailsModalProps> = ({ pixelCoordinates }) => {
+export const ButtonDetailsModal: FC<ButtonDetailsModalProps> = ({ selectedPixelProperties, onChangePixelClick }) => {
   const [pixelInfos, setPixelInfos] = useState<PixelInfosBo | undefined>(undefined)
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(selectedPixelProperties?.color)
   const fetchPixelInfos = async () => {
-    if (pixelCoordinates === undefined) {
+    if (pixelInfos === undefined) {
       return
     } else {
       setPixelInfos(undefined)
-      const infos = (await PixelsApi.pixelsControllerGetPixelInfos(pixelCoordinates.x, pixelCoordinates.y)).data
+      const infos = (await PixelsApi.pixelsControllerGetPixelInfos(pixelInfos.x, pixelInfos.y)).data
 
       setPixelInfos(infos)
     }
   }
 
+  const handleNewSelectedColor = (color: string) => {
+    setSelectedColor(color)
+  }
+
+  const handleChangePixelClick = () => {
+    if (selectedPixelProperties === undefined) {
+      return
+    }
+
+    onChangePixelClick(selectedPixelProperties.x, selectedPixelProperties.y, selectedPixelProperties.color)
+  }
+
   useEffect(() => {
     fetchPixelInfos()
-  }, [pixelCoordinates])
+    setSelectedColor(selectedPixelProperties?.color)
+  }, [selectedPixelProperties])
 
-  const isVisible = pixelCoordinates !== undefined
+  const isVisible = selectedPixelProperties !== undefined
 
   return (
     <Slide
@@ -52,8 +68,9 @@ export const ButtonDetailsModal: FC<ButtonDetailsModalProps> = ({ pixelCoordinat
           backdropFilter='blur(10px)'
         >
           <Box flex={1} pointerEvents={"none"}></Box>
-          <ButtonAvailableColors height={"30px"}/>
-          <Text pointerEvents={"auto"} backgroundColor={"#000000"}>{`pixelInfos x: ${pixelInfos?.x} y: ${pixelInfos?.y} priceToChange: ${pixelInfos?.priceToChange}`}</Text>
+          <ButtonAvailableColors height={"30px"} onNewColorSelected={handleNewSelectedColor}/>
+          <Text pointerEvents={"auto"} backgroundColor={"#000000"}>{`pixelInfos x: ${selectedPixelProperties?.x} y: ${selectedPixelProperties?.y} priceToChange: ${selectedPixelProperties?.priceToChange}`}</Text>
+          <ChangePixelColorButton onClick={handleChangePixelClick}/>
         </Flex>
       </Flex>
     </Slide>

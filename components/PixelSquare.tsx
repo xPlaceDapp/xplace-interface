@@ -46,7 +46,7 @@ export const PixelSquare = PixiComponent('PixelSquare', {
   applyProps(instance: PIXI.Graphics, oldProps: Readonly<PixelSquareProps>, newProps: Readonly<PixelSquareProps>) {
     instance.on('pointerdown', newProps.onClick)
 
-    if (oldProps.isSelected !== newProps.isSelected) {
+    if (oldProps.isSelected !== newProps.isSelected || oldProps.color !== newProps.color) {
       applyPropsOnPixel(instance, newProps)
     }
   }

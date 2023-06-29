@@ -4,11 +4,11 @@ import {ButtonAvailableColorItem} from "./ButtonAvailableColorItem"
 
 interface ButtonAvailableColorsProps {
   height: string,
-  pixelColor: string
+  selectedColor: string,
+  onNewColorSelected: (color: string) => void
 }
 
-export const ButtonAvailableColors: FC<ButtonAvailableColorsProps> = ({ pixelColor, height }) => {
-  const [selectedColor, setSelectedColor] = useState<string>(pixelColor)
+export const ButtonAvailableColors: FC<ButtonAvailableColorsProps> = ({ selectedColor, height , onNewColorSelected}) => {
   const colors = [
     "#ffff00",
     "#ff00ff",
@@ -16,10 +16,6 @@ export const ButtonAvailableColors: FC<ButtonAvailableColorsProps> = ({ pixelCol
     "#ff0000",
     "#ffffff",
   ]
-
-  const handleClickOnColor = (color: string) => {
-    setSelectedColor(color)
-  }
 
   return (
     <Flex
@@ -35,7 +31,7 @@ export const ButtonAvailableColors: FC<ButtonAvailableColorsProps> = ({ pixelCol
             key={color}
             isSelected={color === selectedColor}
             color={color}
-            onClick={handleClickOnColor}
+            onClick={() => onNewColorSelected(color)}
           />
         )
       }

@@ -22,7 +22,7 @@
     "@emotion/react": "11.11.0",
     "@emotion/styled": "11.11.0",
     "@fontsource/poppins": "5.0.2",
-    "@multiversx/sdk-core": "12.2.1",
+    "@multiversx/sdk-core": "12.4.3",
     "@pixi/interaction": "6.5.9",
     "@pixi/react": "^7.1.0",
     "@useelven/core": "0.6.0",

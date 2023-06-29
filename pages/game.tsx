@@ -10,6 +10,10 @@ import {PixelsBo} from "../xplace-client"
 import {LoginModalButton} from "../components/core/LoginModalButton"
 import {Box, Text} from "@chakra-ui/react"
 import {ButtonDetailsModal} from "../components/xplace/ButtonDetailsModal"
+import {useTransaction} from "@useelven/core"
+import {TransactionPendingModal} from "../components/core/TransactionPendingModal"
+import {TransactionOnNetwork} from "@multiversx/sdk-network-providers/out"
+import {useChangePixelColorTransaction} from "../hooks/xplace/useChangePixelColorTransaction"
 
 const Stage = dynamic(() =>
   import('@pixi/react').then((mod) => mod.Stage), {
@@ -36,27 +40,20 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
   const windowDimensions = useWindowDimensions()
   const [zoomPercent, setZoomPercent] = useState(1)
   const [selectedPixel, setSelectedPixel] = useState<SelectedPixelState>(undefined)
+  const [pixels, setPixels] = useState<Array<PixelsBo>>([])
 
   const gridSize = 10 // TODO : fetch from API
 
   const fetchPixels = async () => {
     const data = (await PixelsApi.pixelsControllerGetAllPixels()).data
 
-    /*
-    const data: PixelsBo[] = []
-    for (let x = 0; x < gridSize; x++) {
-      for (let y = 0; y < gridSize; y++) {
-        data.push({
-          address: "",
-          playedCount: 0,
-          x: x,
-          y: y,
-          color: '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')
-        })
-      }
-    }*/
     setPixels(data)
   }
+
+  const { changePixelColor, pending, txResult, error } = useChangePixelColorTransaction(() => {
+    fetchPixels()
+  })
+  const txResultCasted = txResult as (TransactionOnNetwork | undefined)
 
   const handleTapOnPixel = (x: number, y: number) => {
     const isSamePixel = selectedPixel?.x === x && selectedPixel?.y === y
@@ -68,7 +65,13 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
     }
   }
 
-  const [pixels, setPixels] = useState<Array<PixelsBo>>([])
+  const getPixelColor = (x: number, y: number) => {
+    return pixels.find(e => e.x === x && e.y === y)!.color // should never be called before pixels are fetched
+  }
+
+  const handleChangePixelClick = (x: number, y: number, color: string) => {
+    changePixelColor(x, y)
+  }
 
   useEffect(
     () => {
@@ -76,6 +79,12 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
     },
     []
   )
+
+  const selectedPixelProperties = selectedPixel !== undefined ? {
+    x: selectedPixel.x,
+    y: selectedPixel.y,
+    color: getPixelColor(selectedPixel.x, selectedPixel.y)
+  } : undefined
 
   return (
     <Box
@@ -139,7 +148,13 @@ const GameComponent: FunctionComponent<GameComponentProps> = (props) => {
         width={"100%"}
         pointerEvents={"none"}
       >
-        <ButtonDetailsModal pixelCoordinates={selectedPixel}/>
+        <ButtonDetailsModal selectedPixelProperties={selectedPixelProperties} onChangePixelClick={handleChangePixelClick}/>
+        <TransactionPendingModal
+          isOpen={pending}
+          successTxHash={txResultCasted?.hash}
+          txError={error}
+          additionalMessage={'lol'}
+        />
       </Box>
     </Box>
   )
