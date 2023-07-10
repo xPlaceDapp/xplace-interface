@@ -1,72 +1,72 @@
-### Elven Tools Dapp
+# @multiversx/template-dapp
 
-- Docs: [elven.tools/docs/minter-dapp-introduction.html](https://www.elven.tools/docs/minter-dapp-introduction.html)
-- Dapp's React hooks and components [elven.tools/docs/dapp-react-hooks-and-components.html](https://www.elven.tools/docs/dapp-react-hooks-and-components.html)
-- Demo: [dapp-demo.elven.tools](https://dapp-demo.elven.tools)
-- Elven Tools intro (including the Dapp): [youtu.be/Jou5jn8PFz8](https://youtu.be/Jou5jn8PFz8)
+The **MultiversX dApp Template**, built using [React.js](https://reactjs.org/) and [Typescript](https://www.typescriptlang.org/).
+It's a basic implementation of [@multiversx/sdk-dapp](https://www.npmjs.com/package/@multiversx/sdk-dapp), providing the basics for MultiversX authentication and TX signing.
 
-The Dapp is built using Nextjs and a couple of helpful tools. It allows you to interact with the MultiversX blockchain and smart contracts, and especially it is prepared for the [Elven Tools Smart Contract](https://github.com/ElvenTools/elven-nft-minter-sc). But you can always modify it and adjust it for your needs.
+See [Dapp template](https://template-dapp.multiversx.com/) for live demo.
 
-### It provides:
+## Requirements
 
-- Auth with 4 MultiversX blockchain providers
-  - Web Wallet
-  - xPortal mobile app
-  - MultiversX DeFi browser extension
-  - Ledger Nano
-- React hooks for making transactions
-- React hooks for querying smart contracts
-- Tools and React hooks for app state synchronization
-- API endpoint rewrites and 'guard' middleware
-- Preconfigured UI based on Chakra UI
-- The template with sections mainly used on minter dapps (it will be developed further)
+- Node.js version 12.16.2+
+- Npm version 6.14.4+
 
-### @useElven/core
+## Getting Started
 
-The template is based on `@useelven/core` npm library.
+The dapp is a client side only project and is built using the [Create React App](https://create-react-app.dev) scripts.
 
-- [@useelven/core docs](https://www.useElven.com) - React hooks for MultiversX blockchain
+### Instalation and running
 
-Besides that, there are custom React components and hooks that will help you with development.
+### Step 1. Install modules
 
-### Elven Tools Dapp docs
+From a terminal, navigate to the project folder and run:
 
-For more docs on how to use it check the link above, and for more examples see: [elven.tools/docs/dapp-react-hooks-and-components.html](https://elven.tools/docs/dapp-react-hooks-and-components.html)
+```bash
+yarn install
+```
 
-### Tracking the progress
+### Step 2. Update environment
 
-- [Elven Tools Dapp kanban](https://github.com/orgs/ElvenTools/projects/2)
+Go to `App.tsx` and edit the `environment` variable according to the environment you want the app to run on.
+Valid values are `testnet`, `devnet` or `mainnet`
 
-### How to start it locally:
+If you need to edit the network configuration, you can pass in a `customNetworkConfig` object.
+More info about this can be found in [sdk-dapp documentation](https://github.com/multiversx/mx-sdk-dapp)
 
-1. npm install -g elven-tools
-2. elven-tools init-dapp
-3. cd your-dapp-directory
-5. npm run dev
+### Step 3. Running in development mode
 
---- or ---
+In the project folder run:
 
-1. clone or download the repo code
-2. cd elven-tools-dapp
-3. npm install
-4. configure .env.local (you can copy the contents of the .env.example)
-6. npm run dev
+```bash
+yarn start
+```
 
-Check detailed docs on it here: [How to start with the Dapp](https://www.elven.tools/docs/how-to-start-with-the-dapp.html)
+This will start the React app in development mode, using the configs found in the `config.tsx` file.
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-### Main assumption for the dapp:
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-- it works on Nextjs
-- it uses the newest version of [sdk-core](https://github.com/multiversx/mx-sdk-js-core) without the [sdk-dapp](https://github.com/multiversx/mx-sdk-dapp) library.
-- optionally it uses backend-side rewrites to hide the API endpoint, then the only exposed one is `/api`
-- it uses .env file - there is an example in the repo
-- it uses [chakra-ui](https://chakra-ui.com/)
+### Step 4. Build for testing and production use
 
-More docs on it: [Minter Dapp introduction](https://www.elven.tools/docs/minter-dapp-introduction.html)
+A build of the app is necessary to deploy for testing purposes or for production use.
+To build the project run:
 
-### Other tools
+```bash
+yarn build
+```
 
-- [useElven](https://www.useElven.com) - React core hooks for MultiversX blockchain
-- [elven.js](https://www.elvenjs.com) - standalone lite SDK for browsers without build steps
-- [Buildo Begins](https://github.com/xdevguild/buildo-begins) - CLI helper tools - interaction with APIs, smart contracts and protocol
-- [Nextjs Dapp Template](https://github.com/xdevguild/nextjs-dapp-template) - Open source Dapp template for the MultiversX blockchain (more general one).
+## Roadmap
+
+See the [open issues](https://github.com/multiversx/mx-template-dapp/issues) for a list of proposed features (and known issues).
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+One can contribute by creating _pull requests_, or by opening _issues_ for discovered bugs or desired features.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
